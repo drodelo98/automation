@@ -215,12 +215,100 @@ public class not_accepted {
 				System.out.println("Hay más de un cadete");
 				String courier1_name = driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/div/table/tbody/tr[1]/td[9]")).getText();
 				String courier2_name = driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/div/table/tbody/tr[3]/td[9]")).getText();
-				System.out.println(courier1_name);
-				System.out.println(courier2_name);
-				System.exit(1);
 				
+				String courier_row = "";
+				if(courier1_name.equals(courier_name)) {
+					courier_row = "1";
+				}else {
+					courier_row = "3";
+				}
+				
+				
+				courier_state = driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/div/table/tbody/tr["+courier_row+"]/td[3]")).getText();
+				System.out.print(courier_state);
+				if(courier_state.equals("Queued") || courier_state.equals("Dispatched")) {
+					System.out.println("La orden no ha sido aceptada");
+					driver.findElement(By.className("edit_deliveries")).click();
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/div[2]/div/a[1]")).click();
+					espera.esperar_time(500);
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/form/div/div/div/div[2]/select")).sendKeys("W");
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/form/div/div/div/div[3]/input")).click();
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr["+courier_row+"]/td[1]/div[2]/input")).click();
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr[5]/td[1]/div[2]/input")).click();
+					int  uti_value = Integer.parseInt(driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr["+courier_row+"]/td[10]/div[2]/input")).getAttribute("value"));
+					if(uti_value > 5) {
+						System.out.println("Utilizacion mayor a 5");
+						driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr[5]/td[10]/div[2]/input")).clear();
+						driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr[5]/td[10]/div[2]/input")).sendKeys("5");
+					}else {
+						System.out.print("Utilizacion menor 5");
+						driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr[5]/td[10]/div[2]/input")).clear();
+						driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr[5]/td[10]/div[2]/input")).sendKeys(Integer.toString(uti_value));
+					}
+					
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/table/tbody/tr["+courier_row+"]/td[12]/a/i")).click();
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/form/div/div[2]/div/input")).click();
+					driver.switchTo().alert().accept();
+					espera.esperar_time(1000);
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[6]/div/div/table/tbody/tr[5]/td[12]/div[1]/div/a[1]")).click();
+					
+					driver.findElement(By.xpath("//*[@id=\"edit-dispatcher-notes\"]")).click();
+					espera.esperar_time(500);
+					driver.findElement(By.id("dispatcher-notes")).sendKeys("Order was not accepted within X minutes // adiciono un nuevo envío // pongo de primario// cambio valor de utilization // processing // cancelo envío anterior // quito pending // Ds");
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[3]/div[2]/div/div/div[2]/span")).click();
+					processed_orders++;
+					System.out.println("Ordenes procesadas: " + processed_orders);
+					espera.esperar_time(1000);
+					Date current_time = new Date();
+					String checkwadTime = dateFormat.format(current_time);
+					String data = "Se procesa orden: " + order_id +" a la hora: "+ checkwadTime+";\n";
+					System.out.print(data);
+					driver.close();
+					 try {				          
+				          File f1 = new File("C:\\x_logs\\logs_cou.txt");
+				          if(!f1.exists()) {
+				             f1.createNewFile();
+				          }
 
+				          FileWriter fileWritter = new FileWriter("C:\\x_logs\\logs_cou.txt",true);
+				          BufferedWriter bw = new BufferedWriter(fileWritter);
+				          bw.write(data);
+				          bw.close();
+				          System.out.println("Done");
+				       } catch(IOException e){
+				          e.printStackTrace();
+				       }
+					
+				}else {
+					System.out.println("La orden ya fue aceptada");
+					driver.findElement(By.xpath("//*[@id=\"edit-dispatcher-notes\"]")).click();
+					espera.esperar_time(500);
+					driver.findElement(By.id("dispatcher-notes")).sendKeys("Order was not accepted within X minutes // Orden estado Courier Notified // Acciono processing // Ds");
+					driver.findElement(By.xpath("/html/body/div[3]/div/div[3]/div[2]/div/div/div[2]/span")).click();
+					processed_orders++;
+					System.out.println("Ordenes procesadas: " + processed_orders);
+					espera.esperar_time(1000);
+					Date current_time = new Date();
+					String checkwadTime = dateFormat.format(current_time);
+					String data = "Se procesa orden: " + order_id +" a la hora: "+ checkwadTime+";\n";
+					System.out.print(data);
+					driver.close();
+					 try {
+				          File f1 = new File("C:\\x_logs\\logs_cou.txt");
+				          if(!f1.exists()) {
+				             f1.createNewFile();
+				          }
+
+				          FileWriter fileWritter = new FileWriter("C:\\x_logs\\logs_cou.txt",true);
+				          BufferedWriter bw = new BufferedWriter(fileWritter);
+				          bw.write(data);
+				          bw.close();
+				          System.out.println("Done");
+				       } catch(IOException e){
+				          e.printStackTrace();
+				       }
+				}
 			}			
 		}
-}
+	}
 }
