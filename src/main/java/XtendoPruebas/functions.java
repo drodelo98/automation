@@ -262,8 +262,7 @@ public class functions {
 		driver.findElement(By.xpath("/html/body/div[2]/div[1]/div/div/div/div[1]/div/div/div[4]/div/div/div[2]/form/div[2]/textarea")).sendKeys("4 horas dispatch service");
 		driver.findElement(By.xpath("/html/body/div[2]/div[1]/div/div/div/div[1]/div/div/div[4]/div/div/div[2]/form/div[3]/button[2]")).click();
 		System.out.println("Se cierra sesión en turnos");
-		driver.close();
-		
+		driver.close();		
 	}
 	
 	public static void freschat_session(WebDriver driver, int option) {
